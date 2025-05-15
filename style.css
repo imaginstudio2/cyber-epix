@@ -1,0 +1,77 @@
+/* radio-style.css */
+
+body {
+    margin: 0;
+    padding: 20px;
+    font-family: sans-serif;
+    background: #111;
+    color: white;
+    text-align: center;
+  }
+  
+  h1 {
+    margin-bottom: 20px;
+    font-size: 24px;
+  }
+  
+  .radio-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 20px;
+    max-width: 900px;
+    margin: auto;
+  }
+  
+  .radio-card {
+    background: #1e1e1e;
+    border-radius: 12px;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  
+  .radio-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(255, 255, 255, 0.1);
+  }
+  
+  .radio-card img {
+    width: 100%;
+    border-radius: 8px;
+    transition: transform 0.2s;
+  }
+  
+  .radio-card:active img {
+    transform: scale(0.98);
+  }
+  
+  #hiddenAudio {
+    display: none;
+  }
+  
+  /* Mobile responsiveness */
+  @media (max-width: 500px) {
+    .radio-card {
+      padding: 8px;
+    }
+  
+    h1 {
+      font-size: 20px;
+    }
+  }
+  body {
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(-45deg, #0d0d0d, #111111, #1a1a1a, #0f0f0f);
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
+  color: white;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}

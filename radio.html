@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Radiolk</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      background: #fff;
+    }
+    #webview {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: none;
+    }
+    #no-internet {
+      width: 100%;
+      height: 100%;
+      background: #fff url('img/no-internet.jpg') no-repeat center center;
+      background-size: contain;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="no-internet"></div>
+  <iframe id="webview"></iframe>
+
+  <script>
+    function isOnline() {
+      return window.navigator.onLine;
+    }
+
+    window.onload = function () {
+      const webview = document.getElementById("webview");
+      const noInternet = document.getElementById("no-internet");
+
+      if (isOnline()) {
+        webview.src = "https://imaginstudio2.github.io/Radio-Lk/";
+        webview.style.display = "block";
+        noInternet.style.display = "none";
+      } else {
+        webview.style.display = "none";
+        noInternet.style.display = "block";
+      }
+    };
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Category Image Animation - Dark Theme</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1e1e2f, #121217);
+      color: #ddd;
+      padding: 40px;
+      margin: 0;
+      min-height: 100vh;
+    }
+
+    h2 {
+      font-size: 2em;
+      background: linear-gradient(90deg, #7f53ac, #647dee);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 30px;
+      text-shadow: 0 0 5px rgba(127, 83, 172, 0.7);
+    }
+
+    .category {
+      margin-bottom: 60px;
+      text-align: center;
+    }
+
+    .images {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      flex-wrap: wrap;
+    }
+
+    .image-card {
+      background: #2a2a3c;
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow:
+        8px 8px 20px rgba(0, 0, 0, 0.8),
+        -8px -8px 20px rgba(60, 60, 80, 0.5);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .image-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 0 25px #647dee, 0 0 40px #7f53ac;
+    }
+
+    .image-card img {
+      width: 280px;
+      height: auto;
+      border-radius: 12px;
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+
+    .image-card img:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px #647dee, 0 0 25px #7f53ac;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="categoiy">
+    <h2>RADIO</h2>
+    <div class="images">
+      <div class="image-card">
+        <a href="radio.html" target="_blank">
+          <img src="logo (1).png" alt="Image 1" />
+        </a>
+      </div>
+     
+        </a>
+      </div>
+    </div>
+  </div>
+
+  
+
+</body>
+</html>
