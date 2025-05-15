@@ -1,54 +1,348 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Radiolk</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>RADIO LK</title>
   <style>
-    html, body {
-      height: 100%;
-      margin: 0;
-      background: #fff;
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #0d0d0d;
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
-    #webview {
+    header {
+      background: linear-gradient(270deg, #ff0000, #ff9900, #33cc33, #00ccff, #9933ff, #ff3399, #ff0000);
+      background-size: 1400% 1400%;
+      animation: rgbGlow 15s ease infinite;
+      padding: 1rem;
+      text-align: center;
+      font-size: 1.5rem;
+      color: white;
+      text-shadow: 0 0 10px black;
+    }
+    @keyframes rgbGlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    #now-playing {
+      background: #222;
+      color: #0af;
+      text-align: center;
+      padding: 0.5rem;
+      font-size: 1rem;
+      border-bottom: 1px solid #444;
+    }
+    .radio-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1rem;
+      padding: 1rem;
+      flex: 1;
+    }
+    .radio {
+      background: #1e1e1e;
+      padding: 1rem;
+      border-radius: 12px;
+      text-align: center;
+      transition: 0.3s ease;
+    }
+    .radio:hover {
+      background: #292929;
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+      cursor: pointer;
+    }
+    .radio img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+    }
+    .radio p {
+      margin-top: 0.5rem;
+      color: #0af;
+    }
+    .radio.playing {
+      border: 2px solid transparent;
+      animation: borderRGB 2s linear infinite;
+    }
+    @keyframes borderRGB {
+      0% { border-color: #ff0000; }
+      20% { border-color: #ff9900; }
+      40% { border-color: #33cc33; }
+      60% { border-color: #00ccff; }
+      80% { border-color: #9933ff; }
+      100% { border-color: #ff0000; }
+    }
+    nav {
+      background: #111;
+      padding: 1rem;
+      text-align: center;
+      font-size: 0.9rem;
+      border-top: 1px solid #333;
+    }
+    nav a {
+      color: #0af;
+      margin: 0 10px;
+      text-decoration: none;
+    }
+    audio {
+      width: 100%;
+      background: #111;
+    }
+
+    /* --- Popup Modal --- */
+    .popup {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
+      background-color: rgba(0,0,0,0.7);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .popup-content {
+      background: #1a1a1a;
+      padding: 2rem;
+      border-radius: 12px;
+      text-align: center;
+      max-width: 300px;
+      box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+    }
+
+    .popup-content h2 {
+      color: #ff4444;
+      margin-bottom: 1rem;
+    }
+
+    .popup-content button {
+      padding: 0.5rem 1rem;
+      background: #ff4444;
       border: none;
-      display: none;
+      color: white;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 1rem;
     }
-    #no-internet {
-      width: 100%;
-      height: 100%;
-      background: #fff url('img/no-internet.jpg') no-repeat center center;
-      background-size: contain;
-      display: none;
+
+    .popup-content button:hover {
+      background: #cc0000;
+    }
+
+    /* Search Bar Styling */
+    .search-bar {
+      padding: 0.5rem;
+      margin: 1rem;
+      background-color: #333;
+      border: none;
+      color: #0af;
+      width: calc(100% - 2rem);
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+
+    /* GIF Container */
+    #earphone-status {
+      text-align: center;
+      margin-top: 20px;
+    }
+    #earphone-gif {
+      width: 100px;
+      height: 100px;
     }
   </style>
 </head>
 <body>
 
-  <div id="no-internet"></div>
-  <iframe id="webview"></iframe>
+<header>Online Radio</header>
+<input type="text" id="search-bar" class="search-bar" placeholder="Search for a radio station..." />
 
-  <script>
-    function isOnline() {
-      return window.navigator.onLine;
-    }
+<div id="now-playing">🎵 Not Listening</div>
+<div class="radio-container" id="radio-container"></div>
 
-    window.onload = function () {
-      const webview = document.getElementById("webview");
-      const noInternet = document.getElementById("no-internet");
+<!-- Earphone status -->
+<div id="earphone-status">
+  <img id="earphone-gif" src="" alt="Earphone Status" style="display: none;" />
+  <p id="earphone-message"></p>
+</div>
 
-      if (isOnline()) {
-        webview.src = "https://imaginstudio2.github.io/Radio-Lk/";
-        webview.style.display = "block";
-        noInternet.style.display = "none";
+<nav>
+  <a href="https://imaginstudio2.github.io/cyber-epix/index.html" target="_blank">Web Site</a> |
+  <a href="https://www.uptodown.com/developer/imagine-studio1" target="_blank">Rate</a> |
+  <span>DEVLOPER BY cyberepix</span>
+</nav>
+
+<audio id="radio-player" preload="none" controls></audio>
+
+<!-- Popup for no internet -->
+<div class="popup" id="popup">
+  <div class="popup-content">
+    <h2>Oops!</h2>
+    <p>Check your internet connection</p>
+    <button onclick="closePopup()">OK</button>
+  </div>
+</div>
+
+<script>
+  const stations = [
+    { name: "Shaa Fm", url: "https://radio.lotustechnologieslk.net:2020/stream/shaafmgarden", logo: "sha.jpg" },
+    { name: "Hiru FM", url: "https://radio.lotustechnologieslk.net:2020/stream/hirufmgarden", logo: "hiru.jpg" },
+    { name: "Sooriyan Fm", url: "https://radio.lotustechnologieslk.net:2020/stream/sooriyanfmgarden", logo: "soo.png" },
+    { name: "Neth Fm", url: "https://cp11.serverse.com/proxy/nethfm/stream", logo: "neth.jpg" },
+    { name: "Rangiri Fm", url: "https://rangiri.radioca.st/stream", logo: "ran.jpg" },
+    { name: "Derana Fm", url: "https://cp12.serverse.com/proxy/fmderana/stream", logo: "derana.jpg" },
+    { name: "Lakhanda Fm", url: "https://cp12.serverse.com/proxy/itnfm?mp=/stream", logo: "lakhada.jpg" },
+    { name: "Shraddha FM", url: "https://cp11.serverse.com/proxy/kqxjpewq?mp=/stream/1/", logo: "shadra.png" },
+    { name: "Rhythm FM", url: "https://srv01.onlineradio.voaplus.com/rhythmfm", logo: "ridam.jpg" },
+    { name: "Sirasa FM", url: "https://mbc.thestreamtech.com:8087//stream//1//", logo: "sirasa.jpg" },
+    { name: "Welenda Sevaya", url: "https://securestreams7.autopo.st/?uri=http://220.247.227.6:8000/Scomstream", logo: "welada swea.jpg" },
+    { name: "Chill Radio", url: "https://stream.zeno.fm/53g2h8033d0uv", logo: "city.png" }
+  ];
+
+  const container = document.getElementById("radio-container");
+  const audio = document.getElementById("radio-player");
+  const nowPlaying = document.getElementById("now-playing");
+  const popup = document.getElementById("popup");
+  const earphoneStatus = document.getElementById("earphone-status");
+  const earphoneGif = document.getElementById("earphone-gif");
+  const earphoneMessage = document.getElementById("earphone-message");
+  let currentPlaying = null;
+
+  // Check if earphones are connected
+  function checkEarphones() {
+    navigator.mediaDevices.enumerateDevices().then(devices => {
+      let isEarphonesConnected = false;
+      devices.forEach(device => {
+        if (device.kind === "audiooutput" && device.label.toLowerCase().includes("headphones")) {
+          isEarphonesConnected = true;
+        }
+      });
+      
+      if (isEarphonesConnected) {
+        earphoneGif.style.display = "block";
+        earphoneGif.src = "earphones_connected.gif";  // Add your earphone GIF path here
+        earphoneMessage.textContent = "🎧 Connected to Earphones";
       } else {
-        webview.style.display = "none";
-        noInternet.style.display = "block";
+        earphoneGif.style.display = "none";
+        earphoneMessage.textContent = "";
       }
-    };
-  </script>
+    });
+  }
+
+  // Initial earphone check
+  checkEarphones();
+
+  setInterval(checkEarphones, 5000);  // Check every 5 seconds
+
+  function showPopup() {
+    popup.style.display = "flex";
+  }
+
+  function closePopup() {
+    popup.style.display = "none";
+  }
+
+  function checkInternet(show = false) {
+    if (!navigator.onLine) {
+      if (show) showPopup();
+      if (currentPlaying) currentPlaying.classList.remove("playing");
+      nowPlaying.textContent = "❌ No Internet Connection";
+      audio.pause();
+      return false;
+    } else {
+      closePopup();
+      return true;
+    }
+  }
+
+  // Initial check
+  checkInternet();
+
+  window.addEventListener('offline', () => checkInternet(true));
+  window.addEventListener('online', () => checkInternet());
+
+  function filterStations(query) {
+    const filteredStations = stations.filter(station => 
+      station.name.toLowerCase().includes(query.toLowerCase())
+    );
+    renderStations(filteredStations);
+  }
+
+  function renderStations(stationsList) {
+    container.innerHTML = ''; // Clear previous stations
+    stationsList.forEach(station => {
+      const div = document.createElement("div");
+      div.classList.add("radio");
+      div.innerHTML = `<img src="${station.logo}" alt="${station.name}" /><p>${station.name}</p>`;
+
+      div.addEventListener("click", () => {
+        if (!checkInternet(true)) return;
+
+        if (currentPlaying) currentPlaying.classList.remove("playing");
+        currentPlaying = div;
+        div.classList.add("playing");
+
+        audio.pause();
+        audio.src = station.url;
+        audio.load();
+        audio.play().catch(e => alert("Play error: " + e.message));
+        nowPlaying.textContent = `🎧 Now Listening: ${station.name}`;
+        
+        // Display Notification
+        showNotification(station.name);
+
+        // Save "Chill Radio" state to localStorage
+        if (station.name === "Chill Radio") {
+          localStorage.setItem("chillRadio", "true");
+        } else {
+          localStorage.removeItem("chillRadio");
+        }
+      });
+
+      container.appendChild(div);
+    });
+  }
+
+  function showNotification(stationName) {
+    if (Notification.permission === "granted") {
+      new Notification(`Now Playing: ${stationName}`, {
+        body: `You're listening to ${stationName}`,
+        icon: 'radio_icon.png' // Optional: You can replace with your own icon
+      });
+    } else if (Notification.permission !== "denied") {
+      Notification.requestPermission().then(permission => {
+        if (permission === "granted") {
+          new Notification(`Now Playing: ${stationName}`, {
+            body: `You're listening to ${stationName}`,
+            icon: 'radio_icon.png' // Optional: You can replace with your own icon
+          });
+        }
+      });
+    }
+  }
+
+  // Auto show notification if Chill Radio was previously selected
+  if (localStorage.getItem("chillRadio") === "true" && navigator.onLine) {
+    showNotification("Chill Radio");
+  }
+
+  // Initially render all stations
+  renderStations(stations);
+
+  // Search bar event listener
+  document.getElementById("search-bar").addEventListener("input", (e) => {
+    filterStations(e.target.value);
+  });
+</script>
 
 </body>
 </html>
+
